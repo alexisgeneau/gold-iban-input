@@ -1,0 +1,396 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input-behavior.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../paper-input/paper-input-error.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+
+
+<!--
+&lt;gold-iban-input&gt;&lt;/gold-iban-input&gt; is an input with validation rules for IBAN.
+This element detects the country code from the first two characters and apply corresponding validation rules.
+You can also give the country code by using the attribute "countryCode".
+
+Example:
+
+    <gold-iban-input></gold-iban-input>
+
+Example:
+
+    <gold-iban-input country-code="FR"></gold-iban-input>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gold-iban-input">
+    <template>
+        <style>
+            :host {
+                display: block;
+                box-sizing: border-box;
+            }
+        </style>
+
+        <paper-input-container id="container">
+
+            <label hidden$="[[!label]]">[[label]]</label>
+
+            <div class="container">
+                <input is="iron-input" id="input"
+                       bind-value="{{value}}"
+                       type="text"
+                       maxlength$="[[maxlength]]"
+                       required$="[[required]]"
+                       allowed-pattern="[0-9 A-Z]"
+                       spellcheck="false"
+                       name$="[[name]">
+            </div>
+        </paper-input-container>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'gold-iban-input',
+
+            behaviors: [
+                Polymer.PaperInputBehavior,
+                Polymer.IronValidatableBehavior,
+                Polymer.IronFormElementBehavior
+            ],
+
+            properties: {
+                label: {
+                    type: String,
+                    value: 'IBAN'
+                },
+                name: {
+                    type: String,
+                    value: 'bank_details'
+                },
+                value: {
+                    observer: '_onValueChanged'
+                },
+                countryCode: {
+                    type: String
+                },
+                maxlength: {
+                    computed: '_computeMax(countryCode)'
+                },
+                noAutoCountryCode: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+                if (this.countryCode) {
+                    this.value = this.countryCode;
+                    this.noAutoCountryCode = true;
+                }
+            },
+
+            _onValueChanged: function (value, oldValue) {
+                // The initial property assignment is handled by `ready`.
+                if (oldValue == undefined)
+                    return;
+                if (!this.noAutoCountryCode) {
+                    this._updateCountryCode(value);
+                }else{
+                    if(value.substr(0, 2)!=this.countryCode )
+                    return this.value=this.countryCode+ value.substr(1, value.length-1);
+                }
+                var start = this.$.input.selectionStart;
+                var previousCharASpace = value ? this.value.charAt(start - 1) == ' ' : false;
+                var value = value.replace(/\s+/g, '');
+                var formattedValue = '';
+                for (var i = 0; i < value.length; i++) {
+                    // Add a space after every 4 characters.
+                    if ((i != 0) && (i % 4 == 0)) {
+                        formattedValue += ' ';
+                    }
+                    formattedValue += value[i];
+                }
+                this.updateValueAndPreserveCaret(formattedValue.trim());
+                // If the character right before the selection is a newly inserted
+                // space, we need to advance the selection to maintain the caret position.
+                if (!previousCharASpace && this.value.charAt(start - 1) == ' ') {
+                    this.$.input.selectionStart = start + 1;
+                    this.$.input.selectionEnd = start + 1;
+                }
+                this._handleAutoValidate();
+            },
+
+            _updateCountryCode: function (value) {
+                if (value.length >= 2) {
+                    this.countryCode = value.substr(0, 2);
+                }
+            },
+            _computeMax: function (countryCode) {
+                if (countryCode) {
+                    var max;
+                    switch (countryCode) {
+                        case 'DE':
+                            max = 22;
+                            break;
+                        case 'AT':
+                            max = 20;
+                            break;
+                        case 'BE':
+                            max = 16;
+                            break;
+                        case 'BG':
+                            max = 22;
+                            break;
+                        case 'CY':
+                            max = 28;
+                            break;
+                        case 'DK':
+                            max = 18;
+                            break;
+                        case 'ES':
+                            max = 24;
+                            break;
+                        case 'EE':
+                            max = 20;
+                            break;
+                        case 'FI':
+                            max = 18;
+                            break;
+                        case 'FR':
+                            max = 27;
+                            break;
+                        case 'GR':
+                            max = 27;
+                            break;
+                        case 'HU':
+                            max = 28;
+                            break;
+                        case 'IE':
+                            max = 22;
+                            break;
+                        case 'IS':
+                            max = 26;
+                            break;
+                        case 'IT':
+                            max = 27;
+                            break;
+                        case 'LV':
+                            max = 21;
+                            break;
+                        case 'LI':
+                            max = 21;
+                            break;
+                        case 'LT':
+                            max = 20;
+                            break;
+                        case 'LU':
+                            max = 20;
+                            break;
+                        case 'MT':
+                            max = 31;
+                            break;
+                        case 'NO':
+                            max = 15;
+                            break;
+                        case 'NL':
+                            max = 18;
+                            break;
+                        case 'PL':
+                            max = 28;
+                            break;
+                        case 'PT':
+                            max = 25;
+                            break;
+                        case 'CZ':
+                            max = 24;
+                            break;
+                        case 'RO':
+                            max = 24;
+                            break;
+                        case 'GB':
+                            max = 22;
+                            break;
+                        case 'SK':
+                            max = 24;
+                            break;
+                        case 'SI':
+                            max = 19;
+                            break;
+                        case 'SE':
+                            max = 24;
+                            break;
+                        case 'GI':
+                            max = 23;
+                            break;
+                        case 'AL':
+                            max = 28;
+                            break;
+                        case 'AD':
+                            max = 24;
+                            break;
+                        case 'SA':
+                            max = 24;
+                            break;
+                        case 'AZ':
+                            max = 28;
+                            break;
+                        case 'BH':
+                            max = 22;
+                            break;
+                        case 'BA':
+                            max = 20;
+                            break;
+                        case 'BR':
+                            max = 29;
+                            break;
+                        case 'CR':
+                            max = 21;
+                            break;
+                        case 'HR':
+                            max = 21;
+                            break;
+                        case 'AE':
+                            max = 23;
+                            break;
+                        case 'GE':
+                            max = 22;
+                            break;
+                        case 'GL':
+                            max = 18;
+                            break;
+                        case 'GP':
+                            max = 27;
+                            break;
+                        case 'GT':
+                            max = 28;
+                            break;
+                        case 'GG':
+                            max = 22;
+                            break;
+                        case 'GF':
+                            max = 27;
+                            break;
+                        case 'BV':
+                            max = 15;
+                            break;
+                        case 'IM':
+                            max = 22;
+                            break;
+                        case 'FO':
+                            max = 18;
+                            break;
+                        case 'SJ':
+                            max = 15;
+                            break;
+                        case 'VG':
+                            max = 24;
+                            break;
+                        case 'IL':
+                            max = 23;
+                            break;
+                        case 'JO':
+                            max = 30;
+                            break;
+                        case 'JE':
+                            max = 22;
+                            break;
+                        case 'KZ':
+                            max = 20;
+                            break;
+                        case 'KW':
+                            max = 30;
+                            break;
+                        case 'LB':
+                            max = 28;
+                            break;
+                        case 'MK':
+                            max = 19;
+                            break;
+                        case 'MQ':
+                            max = 27;
+                            break;
+                        case 'MU':
+                            max = 30;
+                            break;
+                        case 'MR':
+                            max = 27;
+                            break;
+                        case 'YT':
+                            max = 27;
+                            break;
+                        case 'MC':
+                            max = 27;
+                            break;
+                        case 'MD':
+                            max = 24;
+                            break;
+                        case 'ME':
+                            max = 22;
+                            break;
+                        case 'NC':
+                            max = 27;
+                            break;
+                        case 'PK':
+                            max = 24;
+                            break;
+                        case 'PS':
+                            max = 29;
+                            break;
+                        case 'PF':
+                            max = 27;
+                            break;
+                        case 'QA':
+                            max = 29;
+                            break;
+                        case 'DO':
+                            max = 28;
+                            break;
+                        case 'RE':
+                            max = 27;
+                            break;
+                        case 'SM':
+                            max = 27;
+                            break;
+                        case 'PM':
+                            max = 27;
+                            break;
+                        case 'CH':
+                            max = 21;
+                            break;
+                        case 'TF':
+                            max = 27;
+                            break;
+                        case 'TN':
+                            max = 24;
+                            break;
+                        case 'TR':
+                            max = 26;
+                            break;
+                        case 'VA':
+                            max = 27;
+                            break;
+                        case 'WF':
+                            max = 27;
+                            break;
+                        default:
+                            this.invalid = true;
+                            return 31;
+                    }
+                    return (max + Math.trunc(max / 4));
+
+                }
+            },
+
+        });
+    </script>
+</dom-module>

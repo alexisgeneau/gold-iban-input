@@ -1,0 +1,43 @@
+{
+  "name": "gold-iban-input",
+  "authors": [
+    "Alexisgeneau <contact@alexis-geneau.fr>"
+  ],
+  "description": "An input for iban (international bank account number).",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed",
+    "web-components"
+  ],
+  "main": "gold-iban-input.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/alexisgeneau/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-input": "PolymerElements/paper-input#~1.1.5",
+    "iron-input": "PolymerElements/iron-input#~1.0.8",
+    "iron-form-element-behavior": "PolymerElements/iron-form-element-behavior#~1.0.6",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#~1.1.2",
+    "paper-item": "PolymerElements/paper-item#~1.1.3",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.0.3"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^3.4.0"
+  },
+  "_release": "912a08d16b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "912a08d16bafbe77c70c5292236241acce594c4d"
+  },
+  "_source": "git://github.com/alexisgeneau/gold-iban-input.git",
+  "_target": "master",
+  "_originalSource": "alexisgeneau/gold-iban-input",
+  "_direct": true
+}
