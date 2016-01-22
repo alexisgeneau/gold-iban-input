@@ -1,6 +1,6 @@
 # gold-iban-input
 
-<gold-iban-input></gold-iban-input> is an input with validation rules for IBAN.
+&lt;gold-iban-input&gt;&lt;/gold-iban-input&gt; is an input with validation rules for IBAN.
 This element detects the country code from the first two characters and apply corresponding validation rules.
 You can also give the country code by using the attribute "country-code".
 
